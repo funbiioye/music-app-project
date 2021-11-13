@@ -2,12 +2,11 @@ import { useState, useEffect }  from 'react'
 import useAuth from './useAuth'
 import Player from './Player'
 import TrackSearchResult from './TrackSearchResult'
-import { Container } from 'react-bootstrap'
-import { Form } from 'react-bootstrap'
-import spotifyWebApi from "spotify-web-api-node"
+import { Container, Form } from 'react-bootstrap'
+import SpotifyWebApi from "spotify-web-api-node"
 import axios from 'axios'
 
-const spotifyApi = new spotifyWebApi ({
+const spotifyApi = new SpotifyWebApi ({
     clientId: "d038dea593d54873bf853cdfcfb1db57"
 })
 
@@ -41,7 +40,7 @@ export default function Dashboard({code}) {
     useEffect(() => {
         if (!accessToken) return
         spotifyApi.setAccessToken(accessToken)
-    },   [accessToken])
+    },  [accessToken])
 
     useEffect(() => {
         if(!search) return setSearchResults([])
@@ -49,6 +48,7 @@ export default function Dashboard({code}) {
 
         let cancel = false
         spotifyApi.searchTracks(search).then(res => {
+            console.log(res)
             if(cancel) return
             setSearchResults(
                 res.body.tracks.items.map(track => {
@@ -61,7 +61,7 @@ export default function Dashboard({code}) {
                     )
 
                     return {
-                        artist: track.artist[0].name,
+                        artist: track.artists[0].name,
                         title: track.name,
                         uri: track.uri,
                         albumUrl: smallestAlbumImage.url,
@@ -75,9 +75,9 @@ export default function Dashboard({code}) {
     }, [search, accessToken]) 
 
 
-    return( 
-        
-         <Container className="d-flex flex-column py-2" style={{height: "100vh" }}>
+    return ( 
+        <Container className="d-flex flex-column py-2" style={{height: "100vh" }}
+        >
             <Form.Control 
                 type = "search" 
                 placeholder="Search Songs/Artists"
@@ -96,11 +96,11 @@ export default function Dashboard({code}) {
                     <div className= "text-center" style={{whiteSpace: "pre"}}>
                         {lyrics}
                     </div>
-                )}
+                )}     
             </div>
-            <div> 
-                <Player accessToken={accessToken} trackUri= {playingTrack?.uri} />
-            </div>
+            <div>  
+                <Player accessToken={accessToken} trackUri= {playingTrack?.uri} /> 
+            </div>    
         </Container> 
         
     )  

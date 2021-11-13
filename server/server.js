@@ -2,9 +2,9 @@ const express = require('express');
 const cors = require("cors")
 const bodyParser = require("body-parser")
 const lyricsFinder = require("lyrics-finder")
-const SpotifyWebApi = require('spotify-web-api-node');
+const   SpotifyWebApi = require('spotify-web-api-node');
 
-const app = express()
+const app = express();
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -26,12 +26,13 @@ app.post('/refresh', (req, res) => {
                 expiresIn: data.body.expiresIn
             });     
         })
-        .catch(() => {
+        .catch((err) => {
+            console.log(err)
             res.sendStatus(400)
         })   
 })
 
-app.post('/login', (req, res) => {
+app.post('/Login', (req, res) => {
     const code = req.body.code
     const spotifyApi = new SpotifyWebApi({
         redirectUri: 'http://localhost:3000',
@@ -48,7 +49,7 @@ app.post('/login', (req, res) => {
                 expiresIn: data.body.expires_in
             })
         })
-        .catch((err) => {
+        .catch(() => {
             res.sendStatus(400)
         })
 })
